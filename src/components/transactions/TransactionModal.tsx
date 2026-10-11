@@ -61,7 +61,8 @@ export const TransactionModal: React.FC = () => {
 
       // Set default selected category/source
       if (txModalType === 'income') {
-        setSelectedSourceOrCat(sources[0]?.name || 'Razorpay');
+        const razorpaySource = sources.find((s) => s.name === 'Razorpay')?.name || 'Razorpay';
+        setSelectedSourceOrCat(razorpaySource);
       } else {
         setSelectedSourceOrCat(categories[0]?.name || 'Fast Food');
       }
@@ -75,7 +76,8 @@ export const TransactionModal: React.FC = () => {
   const handleTypeChange = (newType: TransactionType) => {
     setType(newType);
     if (newType === 'income') {
-      setSelectedSourceOrCat(sources[0]?.name || 'Razorpay');
+      const razorpaySource = sources.find((s) => s.name === 'Razorpay')?.name || 'Razorpay';
+      setSelectedSourceOrCat(razorpaySource);
     } else {
       setSelectedSourceOrCat(categories[0]?.name || 'Fast Food');
     }
@@ -181,7 +183,14 @@ export const TransactionModal: React.FC = () => {
   };
 
   const previewPaise = rupeesToPaise(amountStr);
-  const optionsList = type === 'income' ? sources : categories;
+  const optionsList =
+    type === 'income'
+      ? [...sources].sort((a, b) => {
+          if (a.name === 'Razorpay') return -1;
+          if (b.name === 'Razorpay') return 1;
+          return 0;
+        })
+      : categories;
 
   return (
     <Modal
